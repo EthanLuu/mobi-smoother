@@ -1,6 +1,6 @@
-# Feel better to watch videos on your phone
+# Make your video experience smoother
 
-This repo is for an experimental project which targets at making your video experience on mobile phones smoother. 
+This repo is for an experimental project which targets at making your video experience on mobile phones smoother.
 
 The **smoother** here means:
 
