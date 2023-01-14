@@ -1,1 +1,6 @@
 data/*.json
+__pycache__
+tasks
+.vscode
+data/image
+data/video

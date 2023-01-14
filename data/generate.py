@@ -12,7 +12,7 @@ def generate_bandwidth_data():
     # 生成仿真带宽数据
     time_range = 120
     time_data = list(range(1, time_range + 1))
-    bandwidth_data = [10]
+    bandwidth_data = [10.0]
     for _ in range(time_range - 1):
         pre = bandwidth_data[-1]
         pre += random.random() * 2 - 1
@@ -30,7 +30,7 @@ def save_data(data, file_name):
 
 
 def read_data(file_name):
-    data = pd.read_csv(data_path + file_name, index=False, sep=',')
+    data = pd.read_csv(data_path + file_name, index=False, sep=',')# type: ignore    
     return data
 
 
