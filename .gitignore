@@ -4,3 +4,4 @@ tasks
 .vscode
 data/image
 data/video
+upsampled/*
