@@ -1,26 +1,20 @@
-from common.config import GeneralConfig,AlgoConfig
+class DefaultConfig():
 
-class GeneralConfigPPO(GeneralConfig):
     def __init__(self) -> None:
-        self.env_name = "CartPole-v1"
-        self.algo_name = "PPO"
-        self.seed = 1
-        self.device = "cuda"
-        self.train_eps = 100 # number of episodes for training
-        self.test_eps = 10 # number of episodes for testing
-        self.max_steps = 200 # max steps for each episode
-
-class AlgoConfigPPO(AlgoConfig):
-    def __init__(self) -> None:
-        self.gamma = 0.99 # discount factor
-        self.continuous = False # continuous action space or not
-        self.policy_clip = 0.2 # clip range of policy
-        self.n_epochs = 10 # number of epochs
-        self.gae_lambda = 0.95 # gae lambda
-        self.actor_lr = 0.0003 # learning rate of actor
-        self.critic_lr = 0.0003 # learning rate of critic
-        self.actor_hidden_dim = 256 # 
-        self.critic_hidden_dim = 256
-        self.batch_size = 5 # 
-        self.policy_clip = 0.2
-        self.update_fre = 20 # frequency of updating agent
+        self.env_name = "CartPole-v1"  # name of environment
+        self.new_step_api = True  # whether to use new step api of gym
+        self.wrapper = None  # wrapper of environment
+        self.render = False  # whether to render environment
+        self.algo_name = "RainbowDQN"  # name of algorithm
+        self.mode = "train"  # train or test
+        self.seed = 0  # random seed
+        self.device = "cpu"  # device to use
+        self.train_eps = 100  # number of episodes for training
+        self.test_eps = 20  # number of episodes for testing
+        self.eval_eps = 10  # number of episodes for evaluation
+        self.eval_per_episode = 5  # evaluation per episode
+        self.max_steps = 200  # max steps for each episode
+        self.load_checkpoint = False
+        self.load_path = "tasks"  # path to load model
+        self.show_fig = False  # show figure or not
+        self.save_fig = True  # save figure or not

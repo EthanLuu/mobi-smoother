@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 from basicsr.archs.rrdbnet_arch import RRDBNet
-from models import RealESRGANer, SRVGGNetCompact
+from models.sr_models import RealESRGANer, SRVGGNetCompact
 
 
 class VideoUpsampler:
@@ -98,6 +98,7 @@ class VideoUpsampler:
         video_info['fps'] = eval(video_stream[0]['avg_frame_rate'])
         video_info['nb_frames'] = int(video_stream[0]['nb_frames'])
         self.video_info = video_info
+        self.video_dic = video_stream[0]
 
     def extract_frames(self, video_path, image_path):
         cap = cv2.VideoCapture(video_path)
@@ -152,6 +153,25 @@ class VideoUpsampler:
     def write_frame(self, frame):
         frame = frame.astype(np.uint8).tobytes()
         self.stream_writer.stdin.write(frame)
+
+    def upsample_images(self, output_path, outscale=4):
+        pbar = tqdm(total=self.video_info['nb_frames'],
+                    unit='frame',
+                    desc='inference')
+
+        for id in range(self.video_info['nb_frames']):
+            raw_frame = self.read_frame()
+            try:
+                result, _ = self.upsampler.enhance(raw_frame, outscale)
+            except RuntimeError as error:
+                print('Error', error)
+                print(
+                    'If you encounter CUDA out of memory, try to set --tile with a smaller number.'
+                )
+            else:
+                cv2.imwrite(f"{output_path}/{str(id + 1).zfill(8)}.jpg",
+                            result)
+                pbar.update(1)
 
     def upsample_video(self, output="upsampled.mp4", outscale=4):
         pbar = tqdm(total=self.video_info['nb_frames'],

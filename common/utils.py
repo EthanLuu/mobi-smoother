@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# coding=utf-8
 import os
 import numpy as np
 from pathlib import Path
@@ -12,34 +10,20 @@ from time import time
 import logging
 from pathlib import Path
 
-from matplotlib.font_manager import FontProperties  # 导入字体模块
-
-
-def chinese_font():
-    ''' 设置中文字体，注意需要根据自己电脑情况更改字体路径，否则还是默认的字体
-    '''
-    try:
-        font = FontProperties(fname='/System/Library/Fonts/STHeiti Light.ttc',
-                              size=15)  # fname系统字体路径，此处是mac的
-    except:
-        font = None
-    return font
-
 
 def plot_rewards_cn(rewards, ma_rewards, cfg, tag='train'):
     ''' 中文画图
     '''
     sns.set()
     plt.figure()
-    plt.title(u"{}环境下{}算法的学习曲线".format(cfg.env_name, cfg.algo_name),
-              fontproperties=chinese_font())
-    plt.xlabel(u'回合数', fontproperties=chinese_font())
+    plt.title(u"{}环境下{}算法的学习曲线".format(cfg.env_name, cfg.algo_name))
+    plt.xlabel(u'回合数')
     plt.plot(rewards)
     plt.plot(ma_rewards)
     plt.legend((
         u'奖励',
         u'滑动平均奖励',
-    ), loc="best", prop=chinese_font())
+    ), loc="best")
     if cfg.save:
         plt.savefig(cfg.result_path + f"{tag}_rewards_curve_cn")
 
@@ -94,17 +78,26 @@ def plot_losses(losses, algo="DQN", save=True, path='./'):
     plt.show()
 
 
-def save_results(res_dic, fpath=None):
+def save_results(res_dic, fpath=""):
     ''' save results
     '''
     Path(fpath).mkdir(parents=True, exist_ok=True)
     df = pd.DataFrame(res_dic)
-    df.to_csv(f"{fpath}/res.csv", index=None)
+    df.to_csv(f"{fpath}/res.csv")
 
 
 def merge_class_attrs(ob1, ob2):
     ob1.__dict__.update(ob2.__dict__)
     return ob1
+
+
+def dict_to_obj(dictObj):
+    if not isinstance(dictObj, dict):
+        return dictObj
+    d = dict()
+    for k, v in dictObj.items():
+        d[k] = dict_to_obj(v)
+    return d
 
 
 def get_logger(fpath):
@@ -128,14 +121,14 @@ def get_logger(fpath):
     return logger
 
 
-def save_cfgs(cfgs, fpath):
+def save_cfgs(merged_cfg, fpath):
     ''' save config
     '''
     Path(fpath).mkdir(parents=True, exist_ok=True)
-
+    cfgs = ["general_cfg", "algo_cfg"]
     with open(f"{fpath}/config.yaml", 'w') as f:
         for cfg_type in cfgs:
-            yaml.dump({cfg_type: cfgs[cfg_type].__dict__},
+            yaml.dump({cfg_type: merged_cfg[cfg_type].__dict__},
                       f,
                       default_flow_style=False)
 
@@ -163,7 +156,7 @@ def timing(func):
     return wrap
 
 
-def all_seed(env, seed=1):
+def all_seed(seed=1):
     ''' omnipotent seed for RL, attention the position of seed function, you'd better put it just following the env create function
     Args:
         env (_type_): 
@@ -175,13 +168,13 @@ def all_seed(env, seed=1):
     if seed == 0:
         return
     # print(f"seed = {seed}")
-    env.seed(seed)  # env config
+    # env.seed(seed) # env config
     np.random.seed(seed)
     random.seed(seed)
     torch.manual_seed(seed)  # config for CPU
     torch.cuda.manual_seed(seed)  # config for GPU
     os.environ['PYTHONHASHSEED'] = str(seed)  # config for python scripts
     # config for cudnn
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.enabled = False
+    torch.backends.cudnn.deterministic = True # type: ignore    
+    torch.backends.cudnn.benchmark = False # type: ignore    
+    torch.backends.cudnn.enabled = False # type: ignore    
